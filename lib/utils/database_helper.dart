@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart' as sqflite_ffi;
 import 'package:memorise/models/mood_entry.dart';
 
 class DatabaseHelper {
+  static late sqflite_ffi.DatabaseFactory databaseFactory;
+
   static Database? _database;
   static const String _dbName = 'mood_entries.db';
   static const String _tableName = 'mood_entries';
@@ -15,6 +18,7 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDatabase() async {
+    databaseFactory = sqflite_ffi.databaseFactoryFfi;
     String path = join(await getDatabasesPath(), _dbName);
     return await openDatabase(path, version: 1, onCreate: _createDatabase);
   }
@@ -40,5 +44,15 @@ class DatabaseHelper {
     Database db = await database;
     List<Map<String, dynamic>> entries = await db.query(_tableName);
     return entries.map((e) => MoodEntry.fromMap(e)).toList();
+  }
+
+  // Add the deleteMoodEntry method
+  Future<int> deleteMoodEntry(int id) async {
+    Database db = await database;
+    return await db.delete(
+      _tableName,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 }

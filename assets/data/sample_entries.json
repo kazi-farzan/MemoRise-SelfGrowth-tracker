@@ -1,0 +1,92 @@
+[
+  {
+    "date": "2024-06-10T00:00:00.000",
+    "mood": "😄 Very Happy",
+    "activities": ["Exercise", "Socializing"],
+    "note": "Great day at the gym and met new friends."
+  },
+  {
+    "date": "2024-06-11T00:00:00.000",
+    "mood": "🙂 Happy",
+    "activities": ["Family", "Reading"],
+    "note": "Spent quality time with family and finished a good book."
+  },
+  {
+    "date": "2024-06-12T00:00:00.000",
+    "mood": "😐 Neutral",
+    "activities": ["Work", "Drink water"],
+    "note": "Just another regular day at the office."
+  },
+  {
+    "date": "2024-06-13T00:00:00.000",
+    "mood": "☹️ Sad",
+    "activities": ["Bored", "Bad sleep"],
+    "note": "Couldn't sleep well, feeling down."
+  },
+  {
+    "date": "2024-06-14T00:00:00.000",
+    "mood": "😢 Very Sad",
+    "activities": ["Desperate", "Stressed"],
+    "note": "Overwhelmed with personal issues."
+  },
+  {
+    "date": "2024-06-15T00:00:00.000",
+    "mood": "😄 Very Happy",
+    "activities": ["Gaming", "Relax"],
+    "note": "Had an amazing time gaming with friends."
+  },
+  {
+    "date": "2024-06-16T00:00:00.000",
+    "mood": "🙂 Happy",
+    "activities": ["Party", "Friends"],
+    "note": "Great party night!"
+  },
+  {
+    "date": "2024-06-17T00:00:00.000",
+    "mood": "😐 Neutral",
+    "activities": ["Study", "Meditation"],
+    "note": "Productive study session but feeling just okay."
+  },
+  {
+    "date": "2024-06-18T00:00:00.000",
+    "mood": "☹️ Sad",
+    "activities": ["Angry", "Tired"],
+    "note": "Rough day at work, feeling exhausted and irritated."
+  },
+  {
+    "date": "2024-06-19T00:00:00.000",
+    "mood": "😢 Very Sad",
+    "activities": ["Unsure", "Stressed"],
+    "note": "Struggling with decision-making today."
+  },
+  {
+    "date": "2024-06-20T00:00:00.000",
+    "mood": "😄 Very Happy",
+    "activities": ["Sport", "Friends"],
+    "note": "Played soccer with friends, had a blast."
+  },
+  {
+    "date": "2024-06-21T00:00:00.000",
+    "mood": "🙂 Happy",
+    "activities": ["Spa", "Relax"],
+    "note": "Spa day, feeling rejuvenated."
+  },
+  {
+    "date": "2024-06-22T00:00:00.000",
+    "mood": "😐 Neutral",
+    "activities": ["Work", "Exercise"],
+    "note": "Managed to hit the gym after work, nothing special."
+  },
+  {
+    "date": "2024-06-23T00:00:00.000",
+    "mood": "☹️ Sad",
+    "activities": ["Homework", "Anxious"],
+    "note": "Stressing over upcoming exams."
+  },
+  {
+    "date": "2024-06-24T00:00:00.000",
+    "mood": "😢 Very Sad",
+    "activities": ["Cleaning", "Tired"],
+    "note": "Cleaning all day, feeling drained and sad."
+  }
+]

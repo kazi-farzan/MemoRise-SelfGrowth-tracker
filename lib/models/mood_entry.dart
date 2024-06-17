@@ -1,31 +1,36 @@
 class MoodEntry {
-  final String date;
+
+  final int? id; // Add the id field
+  final DateTime date;
   final String mood;
-  final String note;
-  final String activities;
+  final List<String> activities;
+  final String? note; // Optional note field
 
   MoodEntry({
+    this.id,
     required this.date,
     required this.mood,
-    required this.note,
     required this.activities,
+    this.note,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'date': date,
+      'id': id,
+      'date': date.toIso8601String(),
       'mood': mood,
-      'note': note,
-      'activities': activities,
+      'activities': activities.join(', '), // Convert activities list to string
+      'note': note, // Include note if not null
     };
   }
 
   factory MoodEntry.fromMap(Map<String, dynamic> map) {
     return MoodEntry(
-      date: map['date'],
+      id: map['id'],
+      date: DateTime.parse(map['date']),
       mood: map['mood'],
+      activities: map['activities'].split(', '), // Convert string back to list
       note: map['note'],
-      activities: map['activities'],
     );
   }
 }

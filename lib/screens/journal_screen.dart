@@ -1,112 +1,183 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:memorise/providers/entry_data_provider.dart'; // Adjust path as per your project structure
-import 'package:memorise/models/journal_entry.dart'; // Adjust path as per your project structure
+import 'package:memorise/models/mood_entry.dart';
+import 'package:memorise/utils/database_helper.dart';
+import 'package:intl/intl.dart';
 
-class JournalScreen extends StatelessWidget {
+class JournalScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    // Access the EntryDataProvider instance
-    EntryDataProvider entryProvider = Provider.of<EntryDataProvider>(context);
+  _JournalScreenState createState() => _JournalScreenState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Journal/Notes'),
-      ),
-      body: ListView.builder(
-        itemCount: entryProvider.entries.length,
-        itemBuilder: (context, index) {
-          JournalEntry entry = entryProvider.entries[index];
-          return _buildEntryCard(context, entry);
-        },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Calendar',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Add',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Journal',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.show_chart),
-            label: 'Statistics',
-          ),
-        ],
-        currentIndex: 3, // Current index of Journal screen
-        selectedItemColor: Colors.blue, // Adjust color as needed
-        onTap: (int index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/dashboard');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/calendar_view');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/mood_entry');
-              break;
-            case 3:
-            // Stay on Journal screen
-              break;
-            case 4:
-              Navigator.pushNamed(context, '/statistics');
-              break;
-          }
-        },
-      ),
+class _JournalScreenState extends State<JournalScreen> {
+  List<MoodEntry> _entries = [];
+  bool _isLoading = true;
+  bool _hasError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEntries();
+  }
+
+  Future<void> _loadEntries() async {
+    try {
+      DatabaseHelper dbHelper = DatabaseHelper();
+      List<MoodEntry> entries = await dbHelper.getAllMoodEntries();
+      entries.sort((a, b) => b.date.compareTo(a.date)); // Sort entries by newest first
+      setState(() {
+        _entries = entries;
+        _isLoading = false;
+      });
+    } catch (error) {
+      setState(() {
+        _hasError = true;
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _deleteEntry(int id) async {
+    DatabaseHelper dbHelper = DatabaseHelper();
+    await dbHelper.deleteMoodEntry(id);
+    _loadEntries(); // Refresh entries after deletion
+  }
+
+  void _confirmDelete(BuildContext context, MoodEntry entry) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Delete'),
+          content: Text('Are you sure you want to delete this entry?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Delete', style: TextStyle(color: Colors.red)),
+              onPressed: () async {
+                await _deleteEntry(entry.id!);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildEntryCard(BuildContext context, JournalEntry entry) {
+  Widget _buildEntryCard(BuildContext context, MoodEntry entry) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(16.0),
-        title: Text(
-          '${_formatDate(entry.date)} - ${_formatMood(entry.mood)}',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Column(
+      margin: EdgeInsets.all(10.0),
+      child: Padding(
+        padding: EdgeInsets.all(10.0),
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 8.0),
-            Text('Note: ${entry.notes}'),
-            SizedBox(height: 8.0),
-            Text('Activities: ${entry.activities.join(', ')}'),
+            // Column 1: Emoji for mood
+            Expanded(
+              flex: 1,
+              child: Center(
+                child: Text(
+                  _getEmojiForMood(entry.mood),
+                  style: TextStyle(fontSize: 50.0),
+                ),
+              ),
+            ),
+            SizedBox(width: 10.0),
+
+            // Column 2: Details
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Row 1: Date and Time
+                  if (entry.date != null) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          DateFormat.yMd().add_jm().format(entry.date),
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete_outline, color: Colors.red),
+                          onPressed: () {
+                            _confirmDelete(context, entry);
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5.0),
+                  ],
+
+                  // Row 2: Entry Text
+                  if (entry.note != null && entry.note!.isNotEmpty) ...[
+                    Text(
+                      entry.note!,
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    SizedBox(height: 10.0),
+                  ],
+
+                  // Row 3: Activities as tags
+                  Wrap(
+                    spacing: 5.0,
+                    runSpacing: -8.0,
+                    children: entry.activities.map((activity) {
+                      return Chip(
+                        label: Text(activity),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-        onTap: () {
-          // Navigate to detailed entry view or implement editing functionality
-          _navigateToEntryDetail(context, entry);
-        },
       ),
     );
   }
 
-  void _navigateToEntryDetail(BuildContext context, JournalEntry entry) {
-    // Navigate to detailed entry view screen or implement editing
-    // Example: Navigator.pushNamed(context, '/journal_entry_detail', arguments: entry);
-    // You would need to implement JournalEntryDetailScreen separately
+  String _getEmojiForMood(String mood) {
+    switch (mood) {
+      case '😄 Very Happy':
+        return '😄';
+      case '🙂 Happy':
+        return '🙂';
+      case '😐 Neutral':
+        return '😐';
+      case '☹️ Sad':
+        return '☹️';
+      case '😢 Very Sad':
+        return '😢';
+      default:
+        return '';
+    }
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
-
-  String _formatMood(String mood) {
-    // Add custom formatting if needed
-    return mood;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Journal Entries'),
+      ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : _hasError
+          ? Center(child: Text('Error loading entries'))
+          : _entries.isEmpty
+          ? Center(child: Text('No entries found.'))
+          : ListView.builder(
+        itemCount: _entries.length,
+        itemBuilder: (context, index) {
+          return _buildEntryCard(context, _entries[index]);
+        },
+      ),
+    );
   }
 }
