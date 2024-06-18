@@ -178,6 +178,47 @@ class _JournalScreenState extends State<JournalScreen> {
           return _buildEntryCard(context, _entries[index]);
         },
       ),
+      bottomNavigationBar: FSKNavbar(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/mood_entry');
+        },
+        backgroundColor: Colors.red,
+        child: Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked, // Align FAB to the right inside BottomAppBar
+    );
+  }
+}
+
+class FSKNavbar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BottomAppBar(
+      shape: CircularNotchedRectangle(),
+      color: Colors.white,
+      elevation: 10,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildNavBarItem(Icons.dashboard, 'Profile', '/user_profile', context, false),
+          _buildNavBarItem(Icons.book, 'Journal', '/journal', context, true), // Highlighted
+          _buildNavBarItem(Icons.show_chart, 'Statistics', '/statistics', context, false),
+          SizedBox(width: 48), // Middle space for FAB
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavBarItem(
+      IconData icon, String label, String route, BuildContext context, bool highlighted) {
+    return IconButton(
+      icon: Icon(icon),
+      color: highlighted ? Colors.blue : Colors.grey,
+      onPressed: () {
+        Navigator.pushNamed(context, route);
+      },
+      tooltip: label,
     );
   }
 }
