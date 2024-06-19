@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../widgets/badge_card.dart';
+import '../widgets/fsk_navbar.dart';
+import '../dialogs/edit_name_dialog.dart';
+import '../dialogs/profile_picture_options_dialog.dart';
+import '../data/badges_data.dart';
 
-class UserProfileScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> badges = [
-    {'name': 'First Entry', 'asset': 'assets/badges/first_entry.svg', 'stars': 1},
-    {'name': 'Weekly Streak', 'asset': 'assets/badges/weekly_streak.svg', 'stars': 2},
-    {'name': 'Monthly Streak', 'asset': 'assets/badges/monthly_streak.svg', 'stars': 1},
-    {'name': 'Exercise Enthusiast', 'asset': 'assets/badges/exercise_enthusiast.svg', 'stars': 1},
-    {'name': 'Consistency King', 'asset': 'assets/badges/consistency_king.svg', 'stars': 2},
-    {'name': 'Meditation Master', 'asset': 'assets/badges/meditation_master.svg', 'stars': 0}, // Updated stars to 0
-  ];
+class UserProfileScreen extends StatefulWidget {
+  @override
+  _UserProfileScreenState createState() => _UserProfileScreenState();
+}
+
+class _UserProfileScreenState extends State<UserProfileScreen> {
+  String userName = 'Farzan Kazi';
+  String profileImage = 'assets/user_icon.png';
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +34,7 @@ class UserProfileScreen extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 50,
-                      backgroundImage: AssetImage('assets/user_icon.png'),
+                      backgroundImage: AssetImage(profileImage),
                     ),
                     Positioned(
                       bottom: 0,
@@ -38,7 +42,7 @@ class UserProfileScreen extends StatelessWidget {
                       child: IconButton(
                         icon: Icon(Icons.edit),
                         onPressed: () {
-                          // Add functionality to change profile picture
+                          _showProfilePictureOptions();
                         },
                       ),
                     ),
@@ -51,14 +55,14 @@ class UserProfileScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Farzan Kazi',
+                      userName,
                       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(width: 5),
                     IconButton(
                       icon: Icon(Icons.edit),
                       onPressed: () {
-                        // Add functionality to edit username
+                        _showEditNameDialog();
                       },
                     ),
                   ],
@@ -130,7 +134,8 @@ class UserProfileScreen extends StatelessWidget {
                     name: badge['name'],
                     asset: badge['asset'],
                     stars: badge['stars'],
-                    achieved: badge['stars'] > 0, // Achieved if stars are greater than 0
+                    achieved: badge['stars'] > 0,
+                    description: badge['description'],
                   );
                 }).toList(),
               ),
@@ -149,90 +154,35 @@ class UserProfileScreen extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked, // Align FAB to the right inside BottomAppBar
     );
   }
-}
 
-class FSKNavbar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BottomAppBar(
-      shape: CircularNotchedRectangle(),
-      color: Colors.white,
-      elevation: 10,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavBarItem(Icons.dashboard, 'Profile', '/profile', context, true), // Highlighted
-          _buildNavBarItem(Icons.book, 'Journal', '/journal', context, false),
-          _buildNavBarItem(Icons.show_chart, 'Statistics', '/statistics', context, false),
-          SizedBox(width: 48), // Middle space for FAB
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavBarItem(IconData icon, String label, String route, BuildContext context, bool highlighted) {
-    return IconButton(
-      icon: Icon(icon),
-      color: highlighted ? Colors.blue : Colors.grey,
-      onPressed: () {
-        Navigator.pushNamed(context, route);
+  void _showEditNameDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EditNameDialog(
+          initialName: userName,
+          onSave: (newName) {
+            setState(() {
+              userName = newName;
+            });
+          },
+        );
       },
-      tooltip: label,
     );
   }
-}
 
-class BadgeCard extends StatelessWidget {
-  final String name;
-  final String asset;
-  final bool achieved;
-  final int stars;
-
-  BadgeCard({required this.name, required this.asset, required this.achieved, required this.stars});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      height: 150,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: achieved ? Colors.white : Colors.grey[300],
-        border: Border.all(color: Colors.black),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            asset,
-            height: 60,
-            color: achieved ? null : Colors.grey, // Color badges gray if not achieved
-          ),
-          SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(3, (index) {
-              return Icon(
-                index < stars ? Icons.star : Icons.star_border,
-                color: index < stars ? Colors.amber : Colors.grey,
-                size: 20,
-              );
-            }),
-          ),
-          SizedBox(height: 4),
-          Center(
-            child: Text(
-              name,
-              textAlign: TextAlign.center, // Center align text
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: achieved ? Colors.black : Colors.grey,
-              ),
-            ),
-          ),
-        ],
-      ),
+  void _showProfilePictureOptions() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ProfilePictureOptionsDialog(
+          onSelect: (newImage) {
+            setState(() {
+              profileImage = newImage;
+            });
+          },
+        );
+      },
     );
   }
 }

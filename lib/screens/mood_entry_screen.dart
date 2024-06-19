@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:memorise/models/mood_entry.dart';
 import 'package:memorise/utils/database_helper.dart';
 import 'package:memorise/providers/entry_data_provider.dart';
@@ -40,9 +41,23 @@ class _MoodEntryScreenState extends State<MoodEntryScreen> {
   DateTime selectedDate = DateTime.now();
 
   @override
+  void initState() {
+    super.initState();
+    requestStoragePermission();
+  }
+
+  @override
   void dispose() {
     _noteController.dispose();
     super.dispose();
+  }
+
+  Future<void> requestStoragePermission() async {
+    if (await Permission.storage.request().isGranted) {
+      // The permission was granted
+    } else {
+      // The permission was denied, handle appropriately
+    }
   }
 
   @override
@@ -80,7 +95,8 @@ class _MoodEntryScreenState extends State<MoodEntryScreen> {
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
-                        ), backgroundColor: selectedMood == moodOptions[index]
+                        ),
+                        backgroundColor: selectedMood == moodOptions[index]
                             ? Colors.blue // Change color for selected mood
                             : null,
                         padding: EdgeInsets.all(10.0),

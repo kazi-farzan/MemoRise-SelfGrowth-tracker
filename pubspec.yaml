@@ -18,7 +18,7 @@ dependencies:
   path_provider: ^2.0.3
   cupertino_icons: ^1.0.6
   flutter_svg: ^1.0.0
-  syncfusion_flutter_charts: ^19.2.56
+  permission_handler: ^10.2.0
 
 
 dev_dependencies:
@@ -30,6 +30,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/user_icon.png
+    - assets/
     - assets/badges/
 

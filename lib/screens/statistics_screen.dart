@@ -19,8 +19,8 @@ class StatisticsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildSectionTitle('Weekly Mood Trends'),
-            _buildLineChart(weekDays, [1, 2, 0, 3, 4, 2, 1], Colors.blue, xLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],), // New example data
-            _buildInsights([10, 8, 12, 15, 5]), // Example data, adjust as per your logic
+            _buildLineChart(weekDays, [2, 3, 1, 4, 3, 2, 1], Colors.blue, xLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],), // New example data
+            _buildInsights([0, 1, 2, 2, 1]), // Example data, adjust as per your logic
 
             SizedBox(height: 20.0),
 
@@ -32,7 +32,7 @@ class StatisticsScreen extends StatelessWidget {
               flipXAxis: true,
               xLabels: ['1', '3', '6', '9', '12', '15'],
             ), // Example data, adjust as per your logic
-            _buildInsights([20, 15, 10, 5, 3]), // Example data, adjust as per your logic
+            _buildInsights([0, 3, 5, 4, 3]), // Example data, adjust as per your logic
           ],
         ),
       ),
